@@ -1,0 +1,92 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+import Callout from "../../components/Callout.astro";
+
+const headings = [
+    { depth: 2, slug: "introduction", text: "Introduction" },
+    { depth: 2, slug: "key-features", text: "Key Features" },
+    { depth: 2, slug: "architecture", text: "Architecture" },
+];
+---
+
+<DocsLayout title="Introduction" headings={headings}>
+    <h1 class="text-5xl mb-4 text-white">Introduction</h1>
+    <p class="lead text-xl text-text-secondary mb-8">
+        Newgate is a modern, lightweight, multi-format backend framework for
+        Node.js designed to handle JSON, CSV, XML, YAML, and Binary data
+        effortlessly.
+    </p>
+
+    <h2 id="introduction" class="text-3xl font-bold text-white mt-12 mb-6">
+        What is Newgate?
+    </h2>
+    <p>
+        Unlike traditional frameworks that treat JSON as a first-class citizen
+        and everything else as an afterthought, Newgate is built from the ground
+        up to be <strong>format-agnostic</strong>. It automatically detects the
+        Content-Type of incoming requests and parses the body into a JavaScript
+        object, regardless of the format.
+    </p>
+
+    <Callout type="tip" title="Did you know?">
+        Newgate also handles response serialization automatically. Just use <code
+            >res.xml(data)</code
+        > or <code>res.csv(data)</code>
+        and we handle the headers and formatting for you.
+    </Callout>
+
+    <h2 id="key-features" class="text-3xl font-bold text-white mt-12 mb-6">
+        Key Features
+    </h2>
+    <ul>
+        <li>
+            <strong>Multi-format Parsing:</strong> JSON, CSV, XML, YAML, Form-Data,
+            Binary.
+        </li>
+        <li>
+            <strong>Express-style Routing:</strong> Familiar syntax for easy adoption.
+        </li>
+        <li>
+            <strong>Enhanced Responses:</strong> Helper methods for all supported
+            formats.
+        </li>
+        <li>
+            <strong>Auto-Documentation:</strong> Generates OpenAPI specs from your
+            routes.
+        </li>
+    </ul>
+
+    <h2 id="architecture" class="text-3xl font-bold text-white mt-12 mb-6">
+        Architecture Overview
+    </h2>
+    <p>
+        Newgate sits on top of the native Node.js HTTP server but provides a
+        robust pipeline for request processing.
+    </p>
+
+    <div
+        class="my-8 p-6 bg-surface border border-surface-highlight rounded-xl overflow-x-auto"
+    >
+        <pre
+            class="font-mono text-sm leading-relaxed">
+[Client] --&gt; HTTP Request --&gt; [Newgate Core]
+                                   |
+                             [Format Detector]
+                                   |
+                          (header: text/csv?) --&gt; [CSV Parser]
+                                   |
+                           [Middleware Stack]
+                                   |
+                           [Route  Handler]
+                                   |
+                          [Response Factory]
+                                   |
+[Client] &lt;-- HTTP Response &lt;-- (res.csv())
+</pre>
+    </div>
+
+    <Callout type="security" title="Security Notice">
+        By default, the XML parser has <code>entity: false</code> to protect against
+        XXE attacks. You can override this in the configuration if absolutely necessary.
+    </Callout>
+</DocsLayout>

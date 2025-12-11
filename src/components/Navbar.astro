@@ -1,0 +1,86 @@
+---
+import { Github, Twitter, Search, Menu } from "lucide-react";
+
+const navLinks = [
+    { name: "Docs", href: "/docs" },
+    { name: "API", href: "/api" },
+    { name: "Blog", href: "/blog" },
+];
+---
+
+<nav
+    class="sticky top-0 z-50 w-full border-b border-surface-highlight bg-background/80 backdrop-blur-md"
+>
+    <div
+        class="max-w-7xl mx-auto px-4 md:px-8 h-16 flex items-center justify-between"
+    >
+        <!-- Logo -->
+        <a href="/" class="flex items-center gap-2 group">
+            <div
+                class="w-8 h-8 rounded bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-black font-bold text-lg font-heading"
+            >
+                N
+            </div>
+            <span
+                class="font-heading font-bold text-xl tracking-tight group-hover:text-primary transition-colors duration-200"
+            >
+                Newgate<span class="text-primary">.</span>
+            </span>
+        </a>
+
+        <!-- Desktop Nav -->
+        <div class="hidden md:flex items-center gap-8">
+            {
+                navLinks.map((link) => (
+                    <a
+                        href={link.href}
+                        class="text-sm font-medium text-text-secondary hover:text-white transition-colors"
+                    >
+                        {link.name}
+                    </a>
+                ))
+            }
+        </div>
+
+        <!-- Right Actions -->
+        <div class="flex items-center gap-4">
+            <!-- Search Trigger (Visual) -->
+            <button
+                class="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface border border-surface-highlight text-text-secondary hover:border-primary/50 hover:text-white transition-colors group"
+            >
+                <Search className="w-4 h-4" />
+                <span class="text-xs">Search...</span>
+                <span
+                    class="text-[10px] px-1.5 py-0.5 rounded bg-surface-highlight text-text-tertiary border border-white/5 font-mono group-hover:text-text-primary"
+                    >⌘K</span
+                >
+            </button>
+
+            <div
+                class="hidden md:flex items-center gap-3 border-l border-white/10 pl-4"
+            >
+                <a
+                    href="https://github.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-text-secondary hover:text-white transition-colors"
+                >
+                    <Github className="w-5 h-5" />
+                </a>
+                <a
+                    href="https://twitter.com"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-text-secondary hover:text-white transition-colors"
+                >
+                    <Twitter className="w-5 h-5" />
+                </a>
+            </div>
+
+            <!-- Mobile Menu Button -->
+            <button class="md:hidden text-text-secondary hover:text-white">
+                <Menu className="w-6 h-6" />
+            </button>
+        </div>
+    </div>
+</nav>

@@ -1,0 +1,62 @@
+---
+import Layout from "./Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Footer from "../components/Footer.astro";
+import DocSidebar from "../components/DocSidebar.astro";
+
+interface Props {
+    title: string;
+    headings?: { depth: number; slug: string; text: string }[];
+}
+
+const { title, headings = [] } = Astro.props;
+---
+
+<Layout title={`${title} - Newgate Docs`}>
+    <Navbar />
+
+    <div class="flex max-w-[1600px] mx-auto min-h-screen pt-16">
+        <!-- Sidebar -->
+        <DocSidebar />
+
+        <!-- Main Content -->
+        <main class="flex-1 lg:pl-64 min-w-0">
+            <div class="max-w-4xl mx-auto px-6 py-12 lg:px-12 flex gap-12">
+                <div
+                    class="flex-1 min-w-0 prose prose-invert prose-headings:font-heading prose-a:text-primary prose-code:text-primary-100 prose-pre:bg-surface-highlight prose-pre:border prose-pre:border-white/5"
+                >
+                    <slot />
+
+                    <div class="mt-20 pt-10 border-t border-white/5">
+                        <Footer />
+                    </div>
+                </div>
+
+                <!-- Table of Contents (Right Sidebar) -->
+                {
+                    headings.length > 0 && (
+                        <aside class="hidden xl:block w-64 shrink-0 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto">
+                            <h4 class="text-sm font-bold text-white mb-4">
+                                On this page
+                            </h4>
+                            <ul class="space-y-2 text-sm text-text-secondary">
+                                {headings.map((h) => (
+                                    <li
+                                        class:list={[{ "pl-4": h.depth === 3 }]}
+                                    >
+                                        <a
+                                            href={`#${h.slug}`}
+                                            class="hover:text-primary transition-colors"
+                                        >
+                                            {h.text}
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </aside>
+                    )
+                }
+            </div>
+        </main>
+    </div>
+</Layout>

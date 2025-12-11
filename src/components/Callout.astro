@@ -1,0 +1,47 @@
+---
+import { Info, AlertTriangle, Lightbulb, ShieldAlert } from "lucide-react";
+import { clsx } from "clsx";
+
+interface Props {
+    type?: "note" | "warning" | "tip" | "security";
+    title?: string;
+}
+
+const { type = "note", title } = Astro.props;
+
+const config = {
+    note: {
+        icon: Info,
+        styles: "bg-surface border-surface-highlight text-text-secondary",
+        iconColor: "text-blue-400",
+    },
+    warning: {
+        icon: AlertTriangle,
+        styles: "bg-orange-500/10 border-orange-500/20 text-orange-200",
+        iconColor: "text-orange-500",
+    },
+    tip: {
+        icon: Lightbulb,
+        styles: "bg-green-500/10 border-green-500/20 text-green-200",
+        iconColor: "text-green-500",
+    },
+    security: {
+        icon: ShieldAlert,
+        styles: "bg-red-500/10 border-red-500/20 text-red-200",
+        iconColor: "text-red-500",
+    },
+};
+
+const current = config[type];
+const Icon = current.icon;
+---
+
+<div class={clsx("rounded-lg border p-4 my-6 flex gap-4", current.styles)}>
+    <Icon className={clsx("w-6 h-6 shrink-0", current.iconColor)} />
+    <div class="space-y-1">
+        {title && <h5 class="font-bold text-sm">{title}</h5>}
+        <div class="text-sm leading-relaxed">
+            <slot />
+        </div>
+    </div>
+</div>

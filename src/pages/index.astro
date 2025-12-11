@@ -1,0 +1,20 @@
+---
+import Layout from "../layouts/Layout.astro";
+import Navbar from "../components/Navbar.astro";
+import Hero from "../components/Hero";
+import FeatureGrid from "../components/FeatureGrid";
+import MultiFormatDemo from "../components/MultiFormatDemo";
+import QuickStart from "../components/QuickStart.astro";
+import Footer from "../components/Footer.astro";
+---
+
+<Layout title="Newgate — The Multi-Format Backend Framework">
+	<Navbar />
+	<main>
+		<Hero client:load />
+		<FeatureGrid client:visible />
+		<MultiFormatDemo client:visible />
+		<QuickStart />
+	</main>
+	<Footer />
+</Layout>

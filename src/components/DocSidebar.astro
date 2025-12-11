@@ -1,0 +1,85 @@
+---
+const { pathname } = Astro.url;
+
+const sidebar = [
+    {
+        title: "Overview",
+        items: [
+            { title: "Introduction", href: "/docs" },
+            { title: "Architecture", href: "/docs/architecture" },
+        ],
+    },
+    {
+        title: "Getting Started",
+        items: [
+            { title: "Installation", href: "/docs/installation" },
+            { title: "Quick Start", href: "/docs/quick-start" },
+            { title: "Configuration", href: "/docs/configuration" },
+        ],
+    },
+    {
+        title: "Core Concepts",
+        items: [
+            { title: "Routing", href: "/docs/routing" },
+            { title: "Middleware", href: "/docs/middleware" },
+            { title: "Response Helpers", href: "/docs/response-helpers" },
+        ],
+    },
+    {
+        title: "Multi-format Parsing",
+        items: [
+            { title: "JSON", href: "/docs/parsing/json" },
+            { title: "CSV", href: "/docs/parsing/csv" },
+            { title: "XML", href: "/docs/parsing/xml" },
+            { title: "YAML", href: "/docs/parsing/yaml" },
+            { title: "Binary", href: "/docs/parsing/binary" },
+        ],
+    },
+    {
+        title: "Advanced",
+        items: [
+            { title: "Auto-Documentation", href: "/docs/auto-docs" },
+            { title: "Security Practices", href: "/docs/security" },
+        ],
+    },
+];
+
+const isActive = (href: string) => {
+    if (href === "/docs" && pathname === "/docs") return true;
+    if (href !== "/docs" && pathname.startsWith(href)) return true;
+    return false;
+};
+---
+
+<aside
+    class="w-64 fixed top-16 bottom-0 left-0 overflow-y-auto border-r border-white/5 bg-background/50 backdrop-blur-xl hidden lg:block pb-10"
+>
+    <div class="p-6">
+        {
+            sidebar.map((group) => (
+                <div class="mb-8">
+                    <h3 class="text-xs font-bold text-text-tertiary uppercase tracking-widest mb-4">
+                        {group.title}
+                    </h3>
+                    <ul class="space-y-1">
+                        {group.items.map((item) => (
+                            <li>
+                                <a
+                                    href={item.href}
+                                    class:list={[
+                                        "block px-3 py-2 rounded-lg text-sm transition-all duration-200 border-l-2",
+                                        isActive(item.href)
+                                            ? "border-primary text-white bg-primary/10 font-medium"
+                                            : "border-transparent text-text-secondary hover:text-white hover:bg-white/5",
+                                    ]}
+                                >
+                                    {item.title}
+                                </a>
+                            </li>
+                        ))}
+                    </ul>
+                </div>
+            ))
+        }
+    </div>
+</aside>

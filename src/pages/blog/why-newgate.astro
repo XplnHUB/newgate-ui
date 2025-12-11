@@ -1,0 +1,114 @@
+---
+import BlogLayout from "../../layouts/BlogLayout.astro";
+
+const title = "Why We Built Newgate: The Problem with Multi-Format APIs";
+const description =
+    "In 2025, APIs aren't just JSON anymore. Legacy systems speak XML, data pipelines stream CSV, and mobile apps upload binary. Here's why Node.js needed a unified solution.";
+const date = "December 12, 2025";
+const author = "Newgate Team";
+---
+
+<BlogLayout title={title} description={description} date={date} author={author}>
+    <p>
+        If you've been building APIs in Node.js for the last decade, your <code
+            >app.js</code
+        > probably looks something like this:
+    </p>
+
+    <pre><code class="language-javascript">const express = require('express');
+const bodyParser = require('body-parser');
+const xmlparser = require('express-xml-bodyparser');
+const csv = require('csv-parser');
+const multer = require('multer');
+
+const app = express();
+
+app.use(bodyParser.json());
+app.use(xmlparser());
+// ... configuration hell</code></pre>
+
+    <p>
+        Every time you need to handle a new format, you npm install another
+        package, configure another middleware, and hope they don't conflict.
+    </p>
+
+    <h2>The Fragmentation Problem</h2>
+
+    <p>
+        Node.js is famous for its "small modules" philosophy. While great for
+        libraries, it creates friction for frameworks. When you just want to
+        build a webhook receiver that accepts <strong>both</strong> JSON (from Stripe)
+        and XML (from a legacy bank), you spend more time setting up parsers than
+        writing business logic.
+    </p>
+
+    <p>
+        We built <strong>Newgate</strong> to solve this specific fragmentation.
+    </p>
+
+    <h2>One Framework, Any Format</h2>
+
+    <p>
+        Newgate is opinionated about one thing: <strong>Types of Data</strong>.
+    </p>
+
+    <p>
+        Instead of treating JSON as the default and everything else as an edge
+        case, Newgate treats all content types as first-class citizens.
+    </p>
+
+    <h3>Code Comparison</h3>
+
+    <p>
+        Here is how you handle a multi-format endpoint in <strong
+            >Express</strong
+        >:
+    </p>
+
+    <pre><code class="language-javascript">// Express
+app.post('/data', 
+  bodyParser.json(), 
+  xmlparser(), 
+  (req, res) => &#123;
+    if (req.is('xml')) &#123;
+       // logic for xml structure
+    &#125; else &#123;
+       // logic for json structure
+    &#125;
+&#125;);</code></pre>
+
+    <p>
+        And here is <strong>Newgate</strong>:
+    </p>
+
+    <pre><code class="language-javascript">// Newgate
+app.post('/data', (req, res) => &#123;
+  // ⚡️ Automatically parsed based on Content-Type
+  // XML -> Object
+  // JSON -> Object
+  // CSV -> Array of Objects
+  const data = req.body; 
+  
+  return res.json(&#123; received: true &#125;);
+&#125;);</code></pre>
+
+    <h2>Performance First</h2>
+
+    <p>
+        Newgate isn't just a wrapper. It uses zero-copy parsing where possible
+        and streams large payloads (like CSVs) by default, protecting your
+        memory usage.
+    </p>
+
+    <h2>What's Next?</h2>
+
+    <p>
+        We're just getting started. In the coming weeks, we'll be releasing
+        benchmarks showing how Newgate compares to Fastify and Hono for
+        mixed-payload throughput.
+    </p>
+
+    <p>
+        <a href="/docs">Get Started with the Docs</a>
+    </p>
+</BlogLayout>

@@ -1,0 +1,111 @@
+---
+import BlogLayout from "../../layouts/BlogLayout.astro";
+
+const title = "Stop Using body-parser: Modern Node.js Body Handling in 2025";
+const description =
+    "Still manually configuring 4 different middlewares to parse incoming requests? It's time to upgrade your stack. Here is how modern frameworks handle data.";
+const date = "December 18, 2025";
+const author = "Newgate Team";
+---
+
+<BlogLayout title={title} description={description} date={date} author={author}>
+    <p>
+        If you started learning Node.js anytime in the last 10 years, your first
+        tutorial probably told you to install <code>body-parser</code>.
+    </p>
+
+    <p>It's the de-facto standard. But standards change.</p>
+
+    <h2>The Middleware Bloat</h2>
+
+    <p>
+        In a typical production Express application, your setup file often looks
+        like a laundry list of parsers:
+    </p>
+
+    <pre><code class="language-javascript">// The Old Way
+const bodyParser = require('body-parser');
+const multer = require('multer');
+
+app.use(bodyParser.json(&#123; limit: '10mb' &#125;));
+app.use(bodyParser.urlencoded(&#123; extended: true &#125;));
+// Wait, I need to handle XML?
+// Wait, I need file uploads?</code></pre>
+
+    <p>This approach has two major flaws:</p>
+    <ol>
+        <li>
+            <strong>Performance</strong>: You are often running parsing logic on
+            requests that don't need it.
+        </li>
+        <li>
+            <strong>Complexity</strong>: Managing limits, types, and errors
+            across 3-4 different packages is a maintenance headache.
+        </li>
+    </ol>
+
+    <h2>The Modern Approach: Just-in-Time Parsing</h2>
+
+    <p>
+        Modern frameworks like <strong>Newgate</strong> move away from the "global
+        middleware" pattern for body parsing. Instead, they inspect the <code
+            >Content-Type</code
+        > header and parse the body only when you actually access it—or automatically
+        for defined routes.
+    </p>
+
+    <h3>Handling JSON</h3>
+
+    <p><strong>Express</strong>:</p>
+    <pre><code class="language-javascript">app.use(bodyParser.json());
+app.post('/api/json', (req, res) => &#123;
+  console.log(req.body);
+&#125;);</code></pre>
+
+    <p><strong>Newgate</strong>:</p>
+    <pre><code class="language-javascript">app.post('/api/json', (req, res) => &#123;
+  // Parsed automatically because Newgate sees 'application/json'
+  console.log(req.body);
+&#125;);</code></pre>
+
+    <h3>Handling Mixed Content</h3>
+
+    <p>
+        This is where the difference becomes stark. If you need an endpoint that
+        accepts <strong>both</strong> JSON and XML:
+    </p>
+
+    <p><strong>Express</strong>:</p>
+    <p>
+        You need <code>body-parser</code> AND <code>express-xml-bodyparser</code
+        >, and you need to hope they play nice together.
+    </p>
+
+    <p><strong>Newgate</strong>:</p>
+    <pre><code class="language-javascript">app.post('/webhook', (req, res) => &#123;
+  // Works for JSON. Works for XML. Works for Form-Data.
+  // One API to rule them all.
+  const event = req.body;
+  
+  processEvent(event);
+&#125;);</code></pre>
+
+    <h2>Security Implications</h2>
+
+    <p>
+        Global body parsers are a common attack vector. If you parse every
+        request body globally, an attacker can crash your server by sending a
+        massive payload to an endpoint that doesn't even expect a body (like <code
+            >GET /</code
+        >).
+    </p>
+
+    <p>
+        Newgate prefers route-specific configuration or intelligent defaults
+        that respect HTTP verbs, making your application secure by default.
+    </p>
+
+    <p>
+        <a href="/docs/quick-start">Upgrade from Express today</a>
+    </p>
+</BlogLayout>

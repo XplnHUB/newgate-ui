@@ -1,0 +1,61 @@
+---
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "binary-data", text: "Binary Data" },
+    { depth: 2, slug: "form-data", text: "Form-Data" },
+];
+---
+
+<DocsLayout title="Binary & Form-Data" headings={headings}>
+    <h1 id="binary--form-data">Binary &amp; Form-Data</h1>
+
+    <p>
+        Newgate handles binary uploads and <code>multipart/form-data</code> efficiently.
+    </p>
+
+    <h2 id="binary-data">Binary Data</h2>
+
+    <p>
+        For <code>Content-Type: application/octet-stream</code>, the body is
+        exposed as a Node.js <code>Buffer</code>.
+    </p>
+
+    <pre><code class="language-javascript">app.post('/upload-raw', (req, res) =&gt; &#123;
+    // req.body is a Buffer
+    const size = req.body.length;
+    fs.writeFileSync('output.bin', req.body);
+    res.send(`Received $&#123;size&#125; bytes`);
+&#125;);
+</code></pre>
+
+    <h2 id="form-data">Form-Data</h2>
+
+    <p>
+        For <code>multipart/form-data</code>, Newgate parses both fields and
+        files.
+    </p>
+
+    <pre><code class="language-javascript">app.post('/upload', (req, res) =&gt; &#123;
+    const &#123; fields, files &#125; = req.body;
+    
+    console.log('User:', fields.username);
+    
+    if (files.avatar) &#123;
+        console.log('Avatar:', files.avatar.filename);
+        // files.avatar.buffer contains the file data
+    &#125;
+&#125;);
+</code></pre>
+
+    <h3 id="options">Options</h3>
+
+    <p>You can configure upload limits to prevent DoS attacks.</p>
+
+    <pre><code class="language-javascript">const options = &#123;
+  fileSizeLimit: 10 * 1024 * 1024,  // 10MB (default)
+  memoryLimit: 50 * 1024 * 1024,    // 50MB (default)
+  fileCountLimit: 10                 // Max files (default)
+&#125;;
+</code></pre>
+</DocsLayout>

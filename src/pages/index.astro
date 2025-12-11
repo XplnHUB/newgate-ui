@@ -2,6 +2,7 @@
 import Layout from "../layouts/Layout.astro";
 import Navbar from "../components/Navbar.astro";
 import Hero from "../components/Hero";
+import SocialProof from "../components/SocialProof";
 import FeatureGrid from "../components/FeatureGrid";
 import MultiFormatDemo from "../components/MultiFormatDemo";
 import QuickStart from "../components/QuickStart.astro";
@@ -12,9 +13,27 @@ import Footer from "../components/Footer.astro";
 	<Navbar />
 	<main>
 		<Hero client:load />
+		<SocialProof client:visible />
 		<FeatureGrid client:visible />
 		<MultiFormatDemo client:visible />
 		<QuickStart />
 	</main>
 	<Footer />
+	<script
+		type="application/ld+json"
+		set:html={JSON.stringify({
+			"@context": "https://schema.org",
+			"@type": "SoftwareApplication",
+			name: "Newgate",
+			applicationCategory: "DeveloperApplication",
+			operatingSystem: "Node.js",
+			offers: {
+				"@type": "Offer",
+				price: "0",
+				priceCurrency: "USD",
+			},
+			description:
+				"A modern, lightweight multi-format backend framework for Node.js handling JSON, CSV, XML, YAML effortlessly.",
+		})}
+	/>
 </Layout>

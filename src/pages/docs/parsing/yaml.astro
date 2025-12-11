@@ -1,0 +1,32 @@
+---
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "usage", text: "Usage" },
+    { depth: 2, slug: "options", text: "Options" },
+];
+---
+
+<DocsLayout title="YAML Parsing" headings={headings}>
+    <h1 id="yaml-parsing">YAML Parsing</h1>
+
+    <p>
+        For <code>Content-Type: application/x-yaml</code>, Newgate parses the
+        body as YAML.
+    </p>
+
+    <h2 id="usage">Usage</h2>
+
+    <pre><code class="language-javascript">app.post('/yaml-config', (req, res) =&gt; &#123;
+  console.log(req.body); // Parsed YAML object
+  res.send('Config updated');
+&#125;);
+</code></pre>
+
+    <h2 id="options">Options</h2>
+
+    <pre><code class="language-javascript">const options = &#123;
+  multiDoc: false  // Parse multiple documents (default: false)
+&#125;;
+</code></pre>
+</DocsLayout>

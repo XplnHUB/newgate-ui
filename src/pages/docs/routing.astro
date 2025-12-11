@@ -1,0 +1,131 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "basic-routing", text: "Basic Routing" },
+    { depth: 2, slug: "route-parameters", text: "Route Parameters" },
+    { depth: 2, slug: "wildcard-routes", text: "Wildcard Routes" },
+    { depth: 2, slug: "query-strings", text: "Query Strings" },
+    { depth: 2, slug: "route-handlers", text: "Route Handlers" },
+];
+---
+
+<DocsLayout title="Routing" headings={headings}>
+    <h1 id="routing">Routing</h1>
+
+    <p>
+        Newgate provides an Express-like routing system that supports HTTP
+        methods, route parameters, wildcards, and query strings.
+    </p>
+
+    <h2 id="basic-routing">Basic Routing</h2>
+
+    <p>
+        Routes are defined using methods on the <code>app</code> instance that correspond
+        to HTTP verbs.
+    </p>
+
+    <pre><code class="language-javascript">import App from 'newgatejs';
+const app = new App();
+
+// GET method
+app.get('/', (req, res) =&gt; &#123;
+  res.send('Hello World');
+&#125;);
+
+// POST method
+app.post('/', (req, res) =&gt; &#123;
+  res.send('Got a POST request');
+&#125;);
+
+// PUT method
+app.put('/user', (req, res) =&gt; &#123;
+  res.send('Got a PUT request at /user');
+&#125;);
+
+// DELETE method
+app.delete('/user', (req, res) =&gt; &#123;
+  res.send('Got a DELETE request at /user');
+&#125;);
+</code></pre>
+
+    <h2 id="route-parameters">Route Parameters</h2>
+
+    <p>
+        Route parameters are named URL segments that are used to capture the
+        values specified at their position in the URL. The captured values are
+        populated in the <code>req.params</code> object.
+    </p>
+
+    <pre><code class="language-javascript">app.get('/users/:userId/books/:bookId', (req, res) =&gt; &#123;
+  res.json(req.params);
+&#125;);
+// Request URL: http://localhost:3000/users/34/books/8989
+// req.params: &#123; "userId": "34", "bookId": "8989" &#125;
+</code></pre>
+
+    <h3 id="hyphen-and-dot">Hyphen and Dot</h3>
+
+    <p>
+        Parameters can be separated by hyphens (<code>-</code>) and dots (<code
+            >.</code
+        >).
+    </p>
+
+    <pre><code class="language-javascript">app.get('/flights/:from-:to', (req, res) =&gt; &#123;
+  res.json(req.params);
+&#125;);
+// /flights/LAX-SFO =&gt; &#123; "from": "LAX", "to": "SFO" &#125;
+
+app.get('/plantae/:genus.:species', (req, res) =&gt; &#123;
+  res.json(req.params);
+&#125;);
+// /plantae/Prunus.persica =&gt; &#123; "genus": "Prunus", "species": "persica" &#125;
+</code></pre>
+
+    <h2 id="wildcard-routes">Wildcard Routes</h2>
+
+    <p>
+        You can use the asterisk <code>*</code> as a wildcard to match any string.
+    </p>
+
+    <pre><code class="language-javascript">app.get('/files/*', (req, res) =&gt; &#123;
+  // Matches /files/hello.txt, /files/nested/path/file.jpg, etc.
+  res.json(&#123; path: req.url &#125;);
+&#125;);
+</code></pre>
+
+    <h2 id="query-strings">Query Strings</h2>
+
+    <p>
+        Query string parameters are automatically parsed and available in <code
+            >req.query</code
+        >.
+    </p>
+
+    <pre><code class="language-javascript">app.get('/search', (req, res) =&gt; &#123;
+  const &#123; q, limit &#125; = req.query;
+  res.json(&#123; query: q, limit &#125;);
+&#125;);
+// GET /search?q=test&limit=10 
+// req.query: &#123; "q": "test", "limit": "10" &#125;
+</code></pre>
+
+    <h2 id="route-handlers">Route Handlers</h2>
+
+    <p>
+        You can provide multiple callback functions that behave like middleware
+        to handle a request.
+    </p>
+
+    <pre><code class="language-javascript">app.get('/example/b', 
+  (req, res, next) =&gt; &#123;
+    console.log('the response will be sent by the next function ...');
+    next();
+  &#125;, 
+  (req, res) =&gt; &#123;
+    res.send('Hello from B!');
+  &#125;
+);
+</code></pre>
+</DocsLayout>

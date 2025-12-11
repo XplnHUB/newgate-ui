@@ -26,7 +26,7 @@ This repository contains the source code for the documentation website, built wi
 ### Prerequisites
 
 -   Node.js v18.0.0 or higher
--   npm (or pnpm/yarn)
+-   npm
 
 ### Installation
 

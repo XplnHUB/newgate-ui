@@ -1,0 +1,44 @@
+---
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "usage", text: "Usage" },
+    { depth: 2, slug: "error-handling", text: "Error Handling" },
+];
+---
+
+<DocsLayout title="JSON Parsing" headings={headings}>
+    <h1 id="json-parsing">JSON Parsing</h1>
+
+    <p>
+        Newgate automatically parses JSON request bodies when the <code
+            >Content-Type</code
+        > header is set to <code>application/json</code>.
+    </p>
+
+    <h2 id="usage">Usage</h2>
+
+    <pre><code class="language-javascript">app.post('/data', (req, res) =&gt; &#123;
+  // req.body is already an object
+  const &#123; name, email &#125; = req.body;
+  res.json(&#123; received: name &#125;);
+&#125;);
+</code></pre>
+
+    <h2 id="error-handling">Error Handling</h2>
+
+    <p>
+        If the JSON is invalid, Newgate will throw a 400 Bad Request error. You
+        can catch this with error middleware if needed, but it's handled
+        automatically by default.
+    </p>
+
+    <pre><code class="language-javascript">// Example validation manual check
+app.post('/strict-json', (req, res) =&gt; &#123;
+    if (req.bodyType !== 'json') &#123;
+        return res.status(400).send('JSON required');
+    &#125;
+    // ...
+&#125;);
+</code></pre>
+</DocsLayout>

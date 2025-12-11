@@ -1,0 +1,68 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const headings = [{ depth: 2, slug: "how-it-works", text: "How it works" }];
+---
+
+<DocsLayout title="Auto-Documentation" headings={headings}>
+    <h1 id="auto-documentation">Auto-Documentation</h1>
+
+    <div
+        class="bg-surface-highlight border border-primary/20 rounded-lg p-4 mb-8"
+    >
+        <p class="text-primary font-bold m-0 flex items-center gap-2">
+            <svg
+                class="w-5 h-5"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+                ><path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                ></path></svg
+            >
+            Beta Feature
+        </p>
+        <p class="text-text-secondary m-0 mt-1 text-sm">
+            This feature is currently in <strong>Beta</strong>.
+        </p>
+    </div>
+
+    <p>
+        Newgate can automatically generate OpenAPI (Swagger) specifications from
+        your registered routes.
+    </p>
+
+    <h2 id="how-it-works">How it works</h2>
+
+    <p>
+        When enabled, Newgate inspects your route registry and generates a
+        standard <code>openapi.json</code> file.
+    </p>
+
+    <pre><code class="language-javascript">// Example usage (Coming Soon)
+app.enableDocs(&#123;
+    path: '/api-docs',
+    title: 'My API',
+    version: '1.0.0'
+&#125;);
+</code></pre>
+
+    <p>The documentation generator infers:</p>
+    <ul>
+        <li>
+            <strong>Paths</strong>: From your route definitions (<code
+                >/users/:id</code
+            >).
+        </li>
+        <li><strong>Methods</strong>: GET, POST, etc.</li>
+        <li><strong>Parameters</strong>: From <code>:param</code> segments.</li>
+    </ul>
+
+    <p>
+        For request/response body schemas, you will be able to opt-in using a
+        schema validation library in future versions.
+    </p>
+</DocsLayout>

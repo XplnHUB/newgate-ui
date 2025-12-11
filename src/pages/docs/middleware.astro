@@ -1,0 +1,113 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "global-middleware", text: "Global Middleware" },
+    {
+        depth: 2,
+        slug: "path-specific-middleware",
+        text: "Path-Specific Middleware",
+    },
+    {
+        depth: 2,
+        slug: "route-level-middleware",
+        text: "Route-Level Middleware",
+    },
+    { depth: 2, slug: "async-middleware", text: "Async Middleware" },
+    {
+        depth: 2,
+        slug: "error-handling-middleware",
+        text: "Error Handling Middleware",
+    },
+];
+---
+
+<DocsLayout title="Middleware" headings={headings}>
+    <h1 id="middleware">Middleware</h1>
+
+    <p>
+        Middleware functions are functions that have access to the request
+        object (<code>req</code>), the response object (<code>res</code>), and
+        the next middleware function in the application’s request-response
+        cycle.
+    </p>
+
+    <h2 id="global-middleware">Global Middleware</h2>
+
+    <p>Global middleware runs for every request to the application.</p>
+
+    <pre><code class="language-javascript">app.use((req, res, next) =&gt; &#123;
+  console.log(`[$&#123;new Date().toISOString()&#125;] $&#123;req.method&#125; $&#123;req.url&#125;`);
+  next();
+&#125;);
+</code></pre>
+
+    <h2 id="path-specific-middleware">Path-Specific Middleware</h2>
+
+    <p>
+        You can mount middleware at a specific path. The middleware function is
+        executed when the base of the requested path matches <code>path</code>.
+    </p>
+
+    <pre><code class="language-javascript">app.use('/admin', (req, res, next) =&gt; &#123;
+  // Only runs for requests starting with /admin
+  const token = req.headers.authorization;
+  if (token) &#123;
+    next();
+  &#125; else &#123;
+    res.status(401).send('Unauthorized');
+  &#125;
+&#125;);
+</code></pre>
+
+    <h2 id="route-level-middleware">Route-Level Middleware</h2>
+
+    <p>
+        Middleware can be applied to specific routes by passing them as
+        arguments before the final route handler.
+    </p>
+
+    <pre><code class="language-javascript">const auth = (req, res, next) =&gt; &#123;
+    // Auth logic
+    next();
+&#125;;
+
+app.get('/protected', auth, (req, res) =&gt; &#123;
+    res.json(&#123; message: "This is protected data" &#125;);
+&#125;);
+</code></pre>
+
+    <h2 id="async-middleware">Async Middleware</h2>
+
+    <p>Newgate supports async/await in middleware functions.</p>
+
+    <pre><code class="language-javascript">app.use(async (req, res, next) =&gt; &#123;
+  try &#123;
+    const user = await db.getUser(req.headers.userid);
+    req.user = user;
+    next();
+  &#125; catch (err) &#123;
+    next(err);
+  &#125;
+&#125;);
+</code></pre>
+
+    <h2 id="error-handling-middleware">Error Handling Middleware</h2>
+
+    <p>
+        Error-handling middleware functions are defined in the same way as other
+        middleware functions, except they have four arguments instead of three:
+        <code>(err, req, res, next)</code>.
+    </p>
+
+    <pre><code class="language-javascript">app.useError((err, req, res, next) =&gt; &#123;
+  console.error(err.stack);
+  res.status(500).send('Something broke!');
+&#125;);
+</code></pre>
+
+    <p>
+        Notice the use of <code>app.useError</code> to register error handlers. This
+        ensures they are treated correctly by the framework's error propagation mechanism.
+    </p>
+</DocsLayout>

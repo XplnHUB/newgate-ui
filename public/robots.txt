@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://newgate.xplnhub.tech/sitemap-index.xml

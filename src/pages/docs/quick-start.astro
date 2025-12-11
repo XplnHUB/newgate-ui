@@ -1,0 +1,62 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "1-initialize-project", text: "1. Initialize Project" },
+    { depth: 2, slug: "2-create-server", text: "2. Create Server" },
+    { depth: 2, slug: "3-run", text: "3. Run" },
+    { depth: 2, slug: "4-test", text: "4. Test" },
+];
+---
+
+<DocsLayout title="Quick Start" headings={headings}>
+    <h1 id="quick-start">Quick Start</h1>
+
+    <p>Create a minimal Newgate API in seconds.</p>
+
+    <h2 id="1-initialize-project">1. Initialize Project</h2>
+
+    <p>Create a new directory and initialize your project:</p>
+
+    <pre><code class="language-bash">mkdir my-newgate-app
+cd my-newgate-app
+npm init -y
+npm install newgatejs
+</code></pre>
+
+    <h2 id="2-create-server">2. Create Server</h2>
+
+    <p>
+        Create a file named <code>server.js</code> with the following content:
+    </p>
+
+    <pre><code class="language-javascript">import App from 'newgatejs';
+
+const app = new App();
+
+// Basic route
+app.get('/', (req, res) =&gt; &#123;
+    res.json(&#123; message: "Hello from Newgate!" &#125;);
+&#125;);
+
+// Start server
+app.listen(3000, () =&gt; &#123;
+    console.log('Server running at http://localhost:3000');
+&#125;);
+</code></pre>
+
+    <h2 id="3-run">3. Run</h2>
+
+    <p>Start your server:</p>
+
+    <pre><code class="language-bash">node server.js
+</code></pre>
+
+    <h2 id="4-test">4. Test</h2>
+
+    <p>Open another terminal and test your endpoint:</p>
+
+    <pre><code class="language-bash">curl http://localhost:3000
+# Output: &#123;"message":"Hello from Newgate!"&#125;
+</code></pre>
+</DocsLayout>

@@ -1,0 +1,21 @@
+{
+    "name": "Newgate Framework",
+    "short_name": "Newgate",
+    "description": "The Multi-Format Backend Framework for Node.js",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#050505",
+    "theme_color": "#FF8800",
+    "icons": [
+        {
+            "src": "/newgate_icon.ico",
+            "sizes": "64x64 32x32 24x24 16x16",
+            "type": "image/x-icon"
+        },
+        {
+            "src": "/newgate_logo.svg",
+            "sizes": "any",
+            "type": "image/svg+xml"
+        }
+    ]
+}

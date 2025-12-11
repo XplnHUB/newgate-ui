@@ -1,0 +1,29 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "prerequisites", text: "Prerequisites" },
+    { depth: 2, slug: "install-via-npm", text: "Install via npm" },
+];
+---
+
+<DocsLayout title="Installation" headings={headings}>
+    <h1 id="installation">Installation</h1>
+
+    <p>
+        Getting started with Newgate is straightforward. You can install it
+        using npm.
+    </p>
+
+    <h2 id="prerequisites">Prerequisites</h2>
+
+    <ul>
+        <li><strong>Node.js</strong>: v18.0.0 or higher</li>
+        <li><strong>npm</strong>: v9.0.0 or higher</li>
+    </ul>
+
+    <h2 id="install-via-npm">Install via npm</h2>
+
+    <pre><code class="language-bash">npm install newgatejs
+</code></pre>
+</DocsLayout>

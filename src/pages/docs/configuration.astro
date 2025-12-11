@@ -1,0 +1,66 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "cors-configuration", text: "CORS Configuration" },
+    { depth: 2, slug: "environment-variables", text: "Environment Variables" },
+    { depth: 2, slug: "parser-limits", text: "Parser Limits" },
+];
+---
+
+<DocsLayout title="Configuration" headings={headings}>
+    <h1 id="configuration">Configuration</h1>
+
+    <p>
+        Newgate follows a "configuration by code" philosophy. Most configuration
+        happens when setting up the <code>App</code> instance or via middleware.
+    </p>
+
+    <h2 id="cors-configuration">CORS Configuration</h2>
+
+    <p>
+        Cross-Origin Resource Sharing (CORS) can be configured using <code
+            >app.cors()</code
+        >.
+    </p>
+
+    <pre><code class="language-javascript">app.cors(&#123;
+  origin: ['https://trusted.com'],
+  methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+&#125;);
+</code></pre>
+
+    <h2 id="environment-variables">Environment Variables</h2>
+
+    <p>
+        We recommend using <code>dotenv</code> for managing environment-specific configuration.
+    </p>
+
+    <pre><code class="language-bash">npm install dotenv
+</code></pre>
+
+    <pre><code class="language-javascript">// server.js
+import 'dotenv/config';
+import App from 'newgatejs';
+
+const app = new App();
+const PORT = process.env.PORT || 3000;
+
+app.listen(PORT);
+</code></pre>
+
+    <h2 id="parser-limits">Parser Limits</h2>
+
+    <p>
+        You can configure limits for the form-data parser to protect against DoS
+        attacks.
+    </p>
+
+    <pre><code class="language-javascript">// Limits are applied internally by the parser middleware
+// Currently, these are set to safe defaults:
+// - File Size: 10MB
+// - Total Memory: 50MB
+</code></pre>
+</DocsLayout>

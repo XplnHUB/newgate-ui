@@ -1,0 +1,40 @@
+---
+import DocsLayout from "../../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "usage", text: "Usage" },
+    { depth: 2, slug: "security-xxe", text: "Security (XXE)" },
+];
+---
+
+<DocsLayout title="XML Parsing" headings={headings}>
+    <h1 id="xml-parsing">XML Parsing</h1>
+
+    <p>
+        XML parsing is handled automatically for <code
+            >Content-Type: application/xml</code
+        >.
+    </p>
+
+    <h2 id="usage">Usage</h2>
+
+    <pre><code class="language-javascript">app.post('/config', (req, res) =&gt; &#123;
+  // req.body is a parsed object
+  const cleanConfig = req.body.root;
+  // ...
+&#125;);
+</code></pre>
+
+    <h2 id="security-xxe">Security (XXE)</h2>
+
+    <p>
+        The XML parser runs in <strong>Safe Mode</strong> by default to prevent XXE
+        (XML External Entity) attacks.
+    </p>
+
+    <pre><code class="language-javascript">const options = &#123;
+  safeMode: true,  // Disable external entities (default: true)
+  strict: true     // Strict parsing mode (default: true)
+&#125;;
+</code></pre>
+</DocsLayout>

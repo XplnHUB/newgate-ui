@@ -1,0 +1,232 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "overview", text: "Overview" },
+    { depth: 2, slug: "core-components", text: "Core Components" },
+    { depth: 2, slug: "request-flow", text: "Request Flow" },
+    { depth: 2, slug: "module-structure", text: "Module Structure" },
+    { depth: 2, slug: "extensibility", text: "Extensibility" },
+];
+---
+
+<DocsLayout title="Architecture Overview" headings={headings}>
+    <h1 id="architecture-overview">Architecture Overview</h1>
+
+    <p>
+        This document describes the internal architecture and design patterns of
+        the Newgate framework.
+    </p>
+
+    <h2 id="overview">Overview</h2>
+
+    <p>
+        Newgate is a lightweight, multi-format backend framework built on
+        Node.js's native HTTP module. It provides:
+    </p>
+
+    <ul>
+        <li>
+            <strong>Express-like routing</strong> with parameter and wildcard support
+        </li>
+        <li><strong>Automatic content-type detection</strong> and parsing</li>
+        <li>
+            <strong>Middleware system</strong> with global and route-level support
+        </li>
+        <li>
+            <strong>Enhanced response helpers</strong> for multiple formats
+        </li>
+        <li><strong>Error handling</strong> with custom middleware</li>
+        <li><strong>Graceful shutdown</strong> with cleanup hooks</li>
+    </ul>
+
+    <p>
+        The framework is designed to be minimal yet extensible, allowing
+        developers to handle multiple data formats without external dependencies
+        for routing or middleware.
+    </p>
+
+    <h2 id="core-components">Core Components</h2>
+
+    <h3 id="1-app-srccoreappjs">1. App (<code>src/core/app.js</code>)</h3>
+
+    <p>The main application class that orchestrates the framework.</p>
+
+    <p><strong>Responsibilities:</strong></p>
+    <ul>
+        <li>Route registration (GET, POST, PUT, DELETE, PATCH)</li>
+        <li>Global middleware management</li>
+        <li>CORS configuration</li>
+        <li>Shutdown hook management</li>
+        <li>Server lifecycle (listen, shutdown)</li>
+    </ul>
+
+    <p><strong>Key Methods:</strong></p>
+    <ul>
+        <li>
+            <code>get/post/put/delete/patch(path, ...handlers)</code> - Register routes
+        </li>
+        <li><code>use(middleware)</code> - Register middleware</li>
+    </ul>
+
+    <h3 id="2-router-srccorerouterjs">
+        2. Router (<code>src/core/router.js</code>)
+    </h3>
+
+    <p>The <code>Router</code> handles URL matching and handler dispatching.</p>
+    <ul>
+        <li>Stores routes in a structured format.</li>
+        <li>Supports parameterized routes (<code>/users/:id</code>).</li>
+        <li>Supports wildcard routes (<code>/files/*</code>).</li>
+        <li>Handles HTTP methods (GET, POST, PUT, DELETE, etc.).</li>
+    </ul>
+
+    <h3 id="3-middleware-engine">3. Middleware Engine</h3>
+
+    <p>Newgate uses a middleware stack similar to Connect/Express.</p>
+    <ul>
+        <li><strong>Global Middleware</strong>: Runs for every request.</li>
+        <li>
+            <strong>Path-Specific Middleware</strong>: Runs for requests
+            matching a path prefix.
+        </li>
+        <li>
+            <strong>Route-Specific Middleware</strong>: Runs for specific
+            routes.
+        </li>
+        <li>
+            <strong>Error Middleware</strong>: Handles errors propagated via <code
+                >next(err)</code
+            >.
+        </li>
+    </ul>
+
+    <h3 id="4-parsers-srcparsers">4. Parsers (<code>src/parsers/</code>)</h3>
+
+    <p>
+        The parsing system is modular. It inspects the <code>Content-Type</code>
+        header and delegates to the appropriate parser.
+    </p>
+    <ul>
+        <li><code>json.js</code>: Handles <code>application/json</code>.</li>
+        <li><code>csv.js</code>: Handles <code>text/csv</code>.</li>
+        <li><code>xml.js</code>: Handles <code>application/xml</code>.</li>
+        <li>
+            <code>yaml.js</code>: Handles <code>application/x-yaml</code>.
+        </li>
+        <li>
+            <code>formdata.js</code>: Handles <code>multipart/form-data</code>.
+        </li>
+        <li>
+            <code>binary.js</code>: Handles <code>application/octet-stream</code
+            >.
+        </li>
+    </ul>
+
+    <h3 id="5-response-enhancer-srcresponseenhancejs">
+        5. Response Enhancer (<code>src/response/enhance.js</code>)
+    </h3>
+
+    <p>
+        The <code>enhanceResponse</code> function adds helper methods to the native
+        <code>ServerResponse</code> object.
+    </p>
+    <ul>
+        <li><code>res.json(data)</code></li>
+        <li><code>res.csv(data)</code></li>
+        <li><code>res.xml(data)</code></li>
+        <li><code>res.status(code)</code></li>
+        <li><code>res.send(data)</code></li>
+    </ul>
+
+    <h2 id="request-flow">Request Flow</h2>
+
+    <pre><code>graph TD
+    A[Incoming Request] --&gt; B[Enhancement]
+    B --&gt; C[Format Detector]
+    C --&gt; D&#123;Content-Type?&#125;
+    D -- JSON --&gt; E[JSON Parser]
+    D -- CSV --&gt; F[CSV Parser]
+    D -- XML --&gt; G[XML Parser]
+    D -- Other --&gt; H[Other Parsers]
+    E --&gt; I[Middleware Stack]
+    F --&gt; I
+    G --&gt; I
+    H --&gt; I
+    I --&gt; J[Router Matching]
+    J --&gt; K[Handler Execution]
+    K --&gt; L[Response Helper]
+    L --&gt; M[Outgoing Response]
+</code></pre>
+
+    <ol>
+        <li>
+            <strong>Incoming Request</strong>: HTTP server receives a request.
+        </li>
+        <li>
+            <strong>Enhancement</strong>: <code>req</code> and <code>res</code> objects
+            are enhanced with Newgate properties and methods.
+        </li>
+        <li>
+            <strong>Body Parsing</strong>: The body is parsed based on <code
+                >Content-Type</code
+            >.
+        </li>
+        <li>
+            <strong>Middleware Execution</strong>: Global and path-specific
+            middleware are executed in order.
+        </li>
+        <li>
+            <strong>Route Matching</strong>: The router finds a matching route
+            handler.
+        </li>
+        <li>
+            <strong>Handler Execution</strong>: The route handler is executed.
+        </li>
+        <li>
+            <strong>Response</strong>: The handler sends a response using one of
+            the helper methods.
+        </li>
+    </ol>
+
+    <h2 id="module-structure">Module Structure</h2>
+
+    <pre><code class="language-text">newgatejs/
+├── bin/
+│   └── newgatejs.js          # CLI entry point
+├── src/
+│   ├── core/
+│   │   ├── app.js      # Main App class
+│   │   ├── router.js   # Routing logic
+│   │   └── server.js   # HTTP server wrapper
+│   ├── middleware/
+│   │   └── index.js    # Built-in middleware
+│   ├── parsers/
+│   │   ├── index.js    # Parser dispatcher
+│   │   ├── json.js
+│   │   ├── csv.js
+│   │   └── ...
+│   ├── response/
+│   │   └── enhance.js  # Response helpers
+│   └── utils/
+│       └── logger.js   # Logger utility
+├── tests/              # Unit and integration tests
+├── docs/               # Documentation
+└── package.json
+</code></pre>
+
+    <h2 id="extensibility">Extensibility</h2>
+
+    <p>Newgate is designed to be extensible.</p>
+    <ul>
+        <li>
+            <strong>Custom Parsers</strong>: Can be added by modifying the
+            parser dispatcher (future feature: plugin system).
+        </li>
+        <li>
+            <strong>Custom Middleware</strong>: Standard middleware signature <code
+                >(req, res, next)</code
+            > allows easy integration of custom logic.
+        </li>
+    </ul>
+</DocsLayout>

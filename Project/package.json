@@ -1,0 +1,20 @@
+{
+    "name": "rest-api-demo",
+    "version": "1.0.0",
+    "description": "A REST API built with newgatejs",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "start": "node index.js"
+    },
+    "keywords": [
+        "newgatejs",
+        "api",
+        "rest"
+    ],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "newgatejs": "file:../"
+    }
+}

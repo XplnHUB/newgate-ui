@@ -33,11 +33,11 @@ export default function Hero() {
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-bold font-heading tracking-tight text-white mb-6">
-                        Newgate <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">Backend</span>
+                        Newgate <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">JS</span>
                     </h1>
 
                     <p className="text-xl md:text-2xl text-text-secondary max-w-2xl mx-auto leading-relaxed">
-                        The multi-format framework for modern APIs. Handle JSON, CSV, XML, and Binary effortlessly.
+                        The type-safe Node.js framework that natively handles JSON, XML, CSV, and Multipart. Stop fighting body-parsers.
                     </p>
                 </motion.div>
 
@@ -74,7 +74,7 @@ export default function Hero() {
                         Read Documentation
                         <ArrowRight className="w-5 h-5" />
                     </a>
-                    <a href="https://github.com" className="px-8 py-3.5 rounded-lg bg-surface border border-surface-highlight hover:bg-surface-highlight text-white font-medium text-lg transition-all flex items-center gap-2">
+                    <a href="https://github.com/XplnHUB/newgatejs" className="px-8 py-3.5 rounded-lg bg-surface border border-surface-highlight hover:bg-surface-highlight text-white font-medium text-lg transition-all flex items-center gap-2">
                         View on GitHub
                     </a>
                 </motion.div>

@@ -52,25 +52,25 @@ const isActive = (href: string) => {
 ---
 
 <aside
-    class="w-64 fixed top-16 bottom-0 left-0 overflow-y-auto border-r border-white/5 bg-background/50 backdrop-blur-xl hidden lg:block pb-10"
+    class="w-[280px] fixed top-16 bottom-0 left-0 overflow-y-auto border-r border-border bg-surface/30 backdrop-blur-xl hidden lg:block pb-10 scrollbar-hide z-40"
 >
     <div class="p-6">
         {
             sidebar.map((group) => (
                 <div class="mb-8">
-                    <h3 class="text-xs font-bold text-text-tertiary uppercase tracking-widest mb-4">
+                    <h3 class="text-[11px] font-bold text-text-tertiary uppercase tracking-[0.2em] mb-3 px-3">
                         {group.title}
                     </h3>
-                    <ul class="space-y-1">
+                    <ul class="space-y-0.5">
                         {group.items.map((item) => (
                             <li>
                                 <a
                                     href={item.href}
                                     class:list={[
-                                        "block px-3 py-2 rounded-lg text-sm transition-all duration-200 border-l-2",
+                                        "block px-3 py-2 text-sm transition-all duration-200 border-l-2",
                                         isActive(item.href)
-                                            ? "border-primary text-white bg-primary/10 font-medium"
-                                            : "border-transparent text-text-secondary hover:text-white hover:bg-white/5",
+                                            ? "border-primary text-white bg-primary/5 font-medium shadow-[inset_10px_0_20px_-10px_rgba(255,136,0,0.1)]"
+                                            : "border-transparent text-text-secondary hover:text-white hover:bg-surface-hover hover:border-text-tertiary",
                                     ]}
                                 >
                                     {item.title}

@@ -1,0 +1,132 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const headings = [{ depth: 2, slug: "methods", text: "Methods" }];
+---
+
+<DocsLayout title="Response Helpers" headings={headings}>
+    <h1 id="response-helpers">Response Helpers</h1>
+
+    <p>
+        Newgate enhances the native Node.js <code>ServerResponse</code> object with
+        a set of helper methods to make sending responses easier and more expressive.
+    </p>
+
+    <h2 id="methods">Methods</h2>
+
+    <h3 id="resstatuscode"><code>res.status(code)</code></h3>
+
+    <p>Sets the HTTP status for the response. It is a chainable method.</p>
+
+    <pre><code class="language-javascript">res.status(403).end();
+res.status(400).send('Bad Request');
+res.status(200).json(&#123; success: true &#125;);
+</code></pre>
+
+    <h3 id="resjsonbody"><code>res.json(body)</code></h3>
+
+    <p>
+        Sends a JSON response. The method takes an object or array, converts it
+        to JSON, and sets the <code>Content-Type</code> header to <code
+            >application/json</code
+        >.
+    </p>
+
+    <pre><code class="language-javascript">res.json(&#123; name: 'Newgate', type: 'Framework' &#125;);
+</code></pre>
+
+    <h3 id="ressendbody"><code>res.send(body)</code></h3>
+
+    <p>
+        Sends the HTTP response. The body parameter can be a <code>Buffer</code>
+        object, a <code>String</code>, or an <code>Array</code>.
+    </p>
+
+    <pre><code class="language-javascript">res.send(Buffer.from('whoop'));
+res.send(&#123; some: 'json' &#125;);
+res.send('&lt;p&gt;some html&lt;/p&gt;');
+</code></pre>
+
+    <h3 id="rescsvdata"><code>res.csv(data)</code></h3>
+
+    <p>
+        Sends a CSV response. It automatically sets <code
+            >Content-Type: text/csv</code
+        >.
+    </p>
+
+    <pre><code class="language-javascript">const users = [
+    &#123; name: 'Alice', role: 'Admin' &#125;,
+    &#123; name: 'Bob', role: 'User' &#125;
+];
+res.csv(users);
+// Output:
+// name,role
+// Alice,Admin
+// Bob,User
+</code></pre>
+
+    <h3 id="resxmldata"><code>res.xml(data)</code></h3>
+
+    <p>
+        Sends an XML response. It automatically sets <code
+            >Content-Type: application/xml</code
+        >.
+    </p>
+
+    <pre><code class="language-javascript">res.xml(&#123; root: &#123; message: 'Hello XML' &#125; &#125;);
+</code></pre>
+
+    <h3 id="resyamldata"><code>res.yaml(data)</code></h3>
+
+    <p>
+        Sends a YAML response. It automatically sets <code
+            >Content-Type: application/x-yaml</code
+        >.
+    </p>
+
+    <pre><code class="language-javascript">res.yaml(&#123; config: &#123; port: 3000, debug: true &#125; &#125;);
+</code></pre>
+
+    <h3 id="resfilebuffer-mimetype"><code>res.file(buffer, mimetype)</code></h3>
+
+    <p>Sends a file from a buffer with the specified MIME type.</p>
+
+    <pre><code class="language-javascript">const imageBuffer = fs.readFileSync('logo.png');
+res.file(imageBuffer, 'image/png');
+</code></pre>
+
+    <h3 id="resdownloadpath-filename">
+        <code>res.download(path, [filename])</code>
+    </h3>
+
+    <p>
+        Transfers the file at <code>path</code> as an "attachment". Typically, browsers
+        will prompt the user for download.
+    </p>
+
+    <pre><code class="language-javascript">res.download('/report-12345.pdf');
+res.download('/report-12345.pdf', 'report.pdf');
+</code></pre>
+
+    <h3 id="resstreamreadablestream">
+        <code>res.stream(readableStream)</code>
+    </h3>
+
+    <p>Pipes a readable stream to the response.</p>
+
+    <pre><code class="language-javascript">const stream = fs.createReadStream('large-video.mp4');
+res.stream(stream);
+</code></pre>
+
+    <h3 id="reserroroptions"><code>res.error(options)</code></h3>
+
+    <p>A helper to send consistent error responses.</p>
+
+    <pre><code class="language-javascript">res.status(404).error(&#123;
+    message: 'User not found',
+    code: 404,
+    details: &#123; userId: 123 &#125;
+&#125;);
+</code></pre>
+</DocsLayout>

@@ -1,0 +1,228 @@
+---
+import DocsLayout from "../../layouts/DocsLayout.astro";
+
+const headings = [
+    { depth: 2, slug: "input-validation", text: "Input Validation" },
+    { depth: 2, slug: "file-upload-security", text: "File Upload Security" },
+    { depth: 2, slug: "xml-security", text: "XML Security" },
+    { depth: 2, slug: "cors-configuration", text: "CORS Configuration" },
+    { depth: 2, slug: "error-handling", text: "Error Handling" },
+    {
+        depth: 2,
+        slug: "common-vulnerabilities",
+        text: "Common Vulnerabilities",
+    },
+];
+---
+
+<DocsLayout title="Security Practices" headings={headings}>
+    <h1 id="security-practices">Security Practices</h1>
+
+    <p>
+        This guide covers security best practices when using the Newgate
+        framework.
+    </p>
+
+    <h2 id="input-validation">Input Validation</h2>
+
+    <h3 id="validate-all-user-input">Validate All User Input</h3>
+
+    <p>Always validate and sanitize user input before processing:</p>
+
+    <pre><code class="language-javascript">import App from 'newgatejs';
+
+const app = new App();
+
+app.post('/users', (req, res) =&gt; &#123;
+  const &#123; name, email, age &#125; = req.body;
+
+  // Validate required fields
+  if (!name || !email) &#123;
+    return res.status(400).error(&#123;
+      message: 'Missing required fields',
+      code: 400,
+      details: &#123; required: ['name', 'email'] &#125;
+    &#125;);
+  &#125;
+
+  // Validate email format
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(email)) &#123;
+    return res.status(400).error(&#123;
+      message: 'Invalid email format',
+      code: 400
+    &#125;);
+  &#125;
+
+  // Validate age is a number
+  if (age && isNaN(parseInt(age))) &#123;
+    return res.status(400).error(&#123;
+      message: 'Age must be a number',
+      code: 400
+    &#125;);
+  &#125;
+
+  // Process valid data
+  res.json(&#123; success: true, user: &#123; name, email, age &#125; &#125;);
+&#125;);
+</code></pre>
+
+    <h3 id="csv-schema-validation">CSV Schema Validation</h3>
+
+    <p>Use CSV schema validation to enforce data types:</p>
+
+    <pre><code class="language-javascript">app.post('/import', (req, res) =&gt; &#123;
+  if (req.bodyType !== 'csv') &#123;
+    return res.status(400).error(&#123;
+      message: 'Expected CSV format',
+      code: 400
+    &#125;);
+  &#125;
+
+  // Validate CSV schema
+  const schema = &#123;
+    email: (val) =&gt; /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val),
+    age: (val) =&gt; !isNaN(parseInt(val)) && parseInt(val) &gt; 0,
+    status: (val) =&gt; ['active', 'inactive'].includes(val)
+  &#125;;
+
+  try &#123;
+    const records = parseCSV(req.body, &#123; schema &#125;);
+    res.json(&#123; imported: records.length &#125;);
+  &#125; catch (err) &#123;
+    res.status(400).error(&#123;
+      message: 'CSV validation failed',
+      code: 400,
+      details: &#123; error: err.message &#125;
+    &#125;);
+  &#125;
+&#125;);
+</code></pre>
+
+    <h2 id="file-upload-security">File Upload Security</h2>
+
+    <h3 id="configure-upload-limits">Configure Upload Limits</h3>
+
+    <p>Always set appropriate file upload limits to prevent DoS attacks:</p>
+
+    <pre><code class="language-javascript">import App from 'newgatejs';
+
+const app = new App();
+
+// Configure form-data parser with limits
+const uploadOptions = &#123;
+  fileSizeLimit: 5 * 1024 * 1024,    // 5MB per file
+  memoryLimit: 50 * 1024 * 1024,     // 50MB total
+  fileCountLimit: 5                   // Max 5 files
+&#125;;
+</code></pre>
+
+    <h3 id="validate-file-types">Validate File Types</h3>
+
+    <p>Check both MIME type and file extension:</p>
+
+    <pre><code class="language-javascript">import path from 'path';
+
+function validateFile(file) &#123;
+  const allowedMimes = ['image/jpeg', 'image/png', 'application/pdf'];
+  const allowedExts = ['.jpg', '.jpeg', '.png', '.pdf'];
+
+  // Check MIME type
+  if (!allowedMimes.includes(file.mimetype)) &#123;
+    throw new Error(`Invalid MIME type: $&#123;file.mimetype&#125;`);
+  &#125;
+
+  // Check file extension
+  const ext = path.extname(file.filename).toLowerCase();
+  if (!allowedExts.includes(ext)) &#123;
+    throw new Error(`Invalid file extension: $&#123;ext&#125;`);
+  &#125;
+
+  return true;
+&#125;
+</code></pre>
+
+    <h2 id="xml-security">XML Security</h2>
+
+    <h3 id="xxe-protection-enabled-by-default">
+        XXE Protection (Enabled by Default)
+    </h3>
+
+    <p>
+        XML External Entity (XXE) attacks are a common vulnerability in XML
+        parsers. Newgate's XML parser is configured with safe defaults (external
+        entity replacement disabled).
+    </p>
+
+    <pre><code class="language-javascript">// Safe by default - external entities disabled
+app.post('/data', (req, res) =&gt; &#123;
+  if (req.bodyType === 'xml') &#123;
+    // External entities are already disabled
+    res.json(&#123; parsed: req.body &#125;);
+  &#125;
+&#125;);
+</code></pre>
+
+    <h2 id="cors-configuration">CORS Configuration</h2>
+
+    <h3 id="restrict-origins-in-production">Restrict Origins in Production</h3>
+
+    <p>Always restrict CORS origins in production environments:</p>
+
+    <pre><code class="language-javascript">if (process.env.NODE_ENV === 'development') &#123;
+  app.cors(&#123;
+    origin: '*',
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH']
+  &#125;);
+&#125; else &#123;
+  // Production - restrict to specific origins
+  app.cors(&#123;
+    origin: ['https://example.com', 'https://app.example.com'],
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    credentials: true,
+    maxAge: 3600
+  &#125;);
+&#125;
+</code></pre>
+
+    <h2 id="error-handling">Error Handling</h2>
+
+    <h3 id="hide-sensitive-information">Hide Sensitive Information</h3>
+
+    <p>
+        Never expose stack traces or internal details in production error
+        responses:
+    </p>
+
+    <pre><code class="language-javascript">app.useError((err, req, res, next) =&gt; &#123;
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
+  const errorResponse = &#123;
+    error: true,
+    code: err.statusCode || 500,
+    message: isDevelopment ? err.message : 'Internal Server Error'
+  &#125;;
+
+  if (isDevelopment) &#123;
+    errorResponse.stack = err.stack;
+    errorResponse.details = err.details;
+  &#125;
+
+  res.status(errorResponse.code).json(errorResponse);
+&#125;);
+</code></pre>
+
+    <h2 id="common-vulnerabilities">Common Vulnerabilities</h2>
+
+    <h3 id="sql-injection-prevention">SQL Injection Prevention</h3>
+
+    <p>Use parameterized queries instead of string concatenation:</p>
+
+    <pre><code class="language-javascript">// WRONG - Vulnerable to SQL injection
+const query = `SELECT * FROM users WHERE id = $&#123;req.params.id&#125;`;
+
+// CORRECT - Use parameterized queries
+const query = 'SELECT * FROM users WHERE id = $1';
+const values = [req.params.id];
+</code></pre>
+</DocsLayout>

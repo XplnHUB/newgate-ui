@@ -13,50 +13,132 @@ const { title, headings = [] } = Astro.props;
 ---
 
 <Layout title={`${title} - Newgate Docs`}>
+    <div class="bg-brand-mesh fixed inset-0 pointer-events-none z-0"></div>
     <Navbar />
 
-    <div class="flex max-w-[1600px] mx-auto min-h-screen pt-16">
+    <div class="flex max-w-[1920px] mx-auto min-h-screen pt-16 relative z-10">
         <!-- Sidebar -->
         <DocSidebar />
 
         <!-- Main Content -->
-        <main class="flex-1 lg:pl-64 min-w-0">
-            <div class="max-w-4xl mx-auto px-6 py-12 lg:px-12 flex gap-12">
-                <div
-                    class="flex-1 min-w-0 prose prose-invert prose-headings:font-heading prose-a:text-primary prose-code:text-primary-100 prose-pre:bg-surface-highlight prose-pre:border prose-pre:border-white/5"
-                >
-                    <slot />
+        <main class="flex-1 lg:pl-[280px] min-w-0">
+            <div
+                class="max-w-[1400px] mx-auto px-6 py-12 lg:px-12 flex gap-12 xl:gap-24"
+            >
+                <article class="flex-1 min-w-0">
+                    {/* Breadcrumbs */}
+                    <nav
+                        class="flex items-center gap-2 text-sm text-text-tertiary mb-6 font-mono"
+                        aria-label="Breadcrumb"
+                    >
+                        <a
+                            href="/docs"
+                            class="hover:text-primary transition-colors">Docs</a
+                        >
+                        <span>/</span>
+                        <span class="text-text-secondary">{title}</span>
+                    </nav>
 
-                    <div class="mt-20 pt-10 border-t border-white/5">
-                        <Footer />
+                    <script
+                        type="application/ld+json"
+                        set:html={JSON.stringify({
+                            "@context": "https://schema.org",
+                            "@type": "BreadcrumbList",
+                            itemListElement: [
+                                {
+                                    "@type": "ListItem",
+                                    position: 1,
+                                    name: "Docs",
+                                    item: "https://newgate.xplnhub.tech/docs",
+                                },
+                                {
+                                    "@type": "ListItem",
+                                    position: 2,
+                                    name: title,
+                                    item: Astro.url.href,
+                                },
+                            ],
+                        })}
+                    />
+
+                    <div
+                        class="prose prose-invert prose-lg max-w-[80ch]
+                        prose-headings:font-heading prose-headings:font-bold prose-headings:tracking-tight prose-headings:text-white
+                        prose-h1:text-5xl prose-h1:mb-8 prose-h1:leading-tight
+                        prose-h2:text-3xl prose-h2:mt-16 prose-h2:mb-6 prose-h2:border-b prose-h2:border-border prose-h2:pb-4
+                        prose-h3:text-xl prose-h3:mt-10 prose-h3:text-white/90
+                        prose-p:text-text-secondary prose-p:leading-relaxed prose-p:text-[17px]
+                        prose-a:text-primary prose-a:no-underline prose-a:border-b prose-a:border-primary/30 hover:prose-a:border-primary hover:prose-a:text-primary-300 prose-a:transition-all
+                        prose-code:text-primary-100 prose-code:bg-surface-highlight prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded-md prose-code:before:content-none prose-code:after:content-none prose-code:font-mono prose-code:text-sm prose-code:border prose-code:border-white/5
+                        prose-pre:bg-surface prose-pre:border prose-pre:border-border prose-pre:shadow-2xl prose-pre:rounded-xl prose-pre:my-8
+                        prose-li:text-text-secondary prose-li:marker:text-tertiary
+                        prose-th:text-white prose-th:border-b prose-th:border-border prose-th:p-4 prose-th:text-left
+                        prose-td:text-text-secondary prose-td:border-b prose-td:border-border/50 prose-td:p-4
+                        prose-blockquote:border-l-primary prose-blockquote:bg-surface-highlight/20 prose-blockquote:py-1 prose-blockquote:px-4 prose-blockquote:rounded-r-lg prose-blockquote:text-text-secondary prose-blockquote:not-italic"
+                    >
+                        <slot />
                     </div>
-                </div>
+
+                    <div
+                        class="mt-24 pt-10 border-t border-border flex justify-between items-center text-text-tertiary text-sm"
+                    >
+                        <span
+                            >Last updated: {
+                                new Date().toLocaleDateString()
+                            }</span
+                        >
+                        <a
+                            href="https://github.com/XplnHUB/newgatejs"
+                            target="_blank"
+                            class="hover:text-white transition-colors flex items-center gap-2"
+                        >
+                            <svg
+                                class="w-4 h-4"
+                                fill="currentColor"
+                                viewBox="0 0 24 24"
+                                ><path
+                                    d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                                ></path></svg
+                            >
+                            Edit on GitHub</a
+                        >
+                    </div>
+                </article>
 
                 <!-- Table of Contents (Right Sidebar) -->
                 {
                     headings.length > 0 && (
-                        <aside class="hidden xl:block w-64 shrink-0 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto">
-                            <h4 class="text-sm font-bold text-white mb-4">
+                        <aside class="hidden xl:block w-[280px] shrink-0 sticky top-24 h-[calc(100vh-6rem)] overflow-y-auto pb-10">
+                            <h4 class="text-xs font-bold text-white mb-6 uppercase tracking-widest font-heading">
                                 On this page
                             </h4>
-                            <ul class="space-y-2 text-sm text-text-secondary">
-                                {headings.map((h) => (
-                                    <li
-                                        class:list={[{ "pl-4": h.depth === 3 }]}
-                                    >
-                                        <a
-                                            href={`#${h.slug}`}
-                                            class="hover:text-primary transition-colors"
+                            <div class="relative pl-4 border-l border-white/10">
+                                <ul class="space-y-3 text-sm text-text-secondary">
+                                    {headings.map((h) => (
+                                        <li
+                                            class:list={[
+                                                {
+                                                    "pl-4": h.depth === 3,
+                                                    "font-medium text-white":
+                                                        h.depth === 2,
+                                                },
+                                            ]}
                                         >
-                                            {h.text}
-                                        </a>
-                                    </li>
-                                ))}
-                            </ul>
+                                            <a
+                                                href={`#${h.slug}`}
+                                                class="block hover:text-primary transition-colors duration-200"
+                                            >
+                                                {h.text}
+                                            </a>
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
                         </aside>
                     )
                 }
             </div>
+            <Footer />
         </main>
     </div>
 </Layout>

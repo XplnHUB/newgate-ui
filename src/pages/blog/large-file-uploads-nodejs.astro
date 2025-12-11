@@ -1,0 +1,118 @@
+---
+import BlogLayout from "../../layouts/BlogLayout.astro";
+
+const title = "Handling 10GB File Uploads in Node.js (Without Multer)";
+const description =
+    "Binary data handling shouldn't crash your server. Discover how to process massive uploads directly to S3/Disk using Newgate's zero-copy streaming.";
+const date = "December 20, 2025";
+const author = "Newgate Team";
+---
+
+<BlogLayout title={title} description={description} date={date} author={author}>
+    <p>
+        Handling file uploads in Node.js has historically been handled by <code
+            >multer</code
+        >. While <code>multer</code> is great, it connects to Express's middleware
+        chain which can add overhead when dealing with purely streaming data.
+    </p>
+
+    <p>
+        When a user uploads a 10GB video file, you want that data to flow from
+        the Request socket directly to the Disk (or S3) socket, touching your
+        RAM as little as possible.
+    </p>
+
+    <h2>The Streaming Problem</h2>
+
+    <p>
+        By default, many frameworks try to buffer the "field" parts of a
+        multipart request. If you have a form with metadata AND a file, the
+        order matters.
+    </p>
+
+    <p>
+        In <strong>Newgate</strong>, we solved this with an async iterator for
+        multipart processing.
+    </p>
+
+    <h2>The Code</h2>
+
+    <p>Here is how you handle a massive upload in Newgate:</p>
+
+    <pre><code class="language-javascript">import &#123; pipeline &#125; from 'stream/promises';
+import &#123; createWriteStream &#125; from 'fs';
+
+app.post('/upload', async (req, res) => &#123;
+    // Newgate detects 'multipart/form-data'
+    // and provides an async iterator for parts
+    for await (const part of req.body) &#123;
+        
+        if (part.file) &#123;
+            // It's a file stream!
+            // Pipe directly to disk
+            await pipeline(
+                part.value, 
+                createWriteStream(`./uploads/$&#123;part.filename&#125;`)
+            );
+        &#125; else &#123;
+            // It's a field (e.g., 'uploade_by')
+            console.log(`Field $&#123;part.name&#125;: $&#123;part.value&#125;`);
+        &#125;
+    &#125;
+
+    res.json(&#123; success: true &#125;);
+&#125;);</code></pre>
+
+    <h2>Why this matters</h2>
+
+    <ol>
+        <li>
+            <strong>Low Memory Footprint</strong>: We never hold the full file
+            in memory.
+        </li>
+        <li>
+            <strong>Backpressure</strong>: Standard Node.js streams handle
+            backpressure automatically. If the disk is slow, the network socket
+            pauses.
+        </li>
+        <li>
+            <strong>Simplicity</strong>: No complex <code>storage</code> engine configuration.
+            Just standard Streams.
+        </li>
+    </ol>
+
+    <h2>Comparison with Multer</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Feature</th>
+                <th>Multer</th>
+                <th>Newgate</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Setup</strong></td>
+                <td>Complex (Storage Engine)</td>
+                <td>Zero Config</td>
+            </tr>
+            <tr>
+                <td><strong>Memory</strong></td>
+                <td>Low (if configured correctly)</td>
+                <td>Lowest (Native Streams)</td>
+            </tr>
+            <tr>
+                <td><strong>API</strong></td>
+                <td>Middleware-based</td>
+                <td>Async/Await Iterator</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <p>Start building high-performance storage services today.</p>
+
+    <p>
+        <a href="/docs/parsing/binary">Learn more about Binary Parsing</a>
+    </p>
+</BlogLayout>
